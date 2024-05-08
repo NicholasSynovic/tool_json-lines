@@ -1,16 +1,21 @@
 #include "CLI/CLI.hpp"
 #include <iostream>
+#include <filesystem>
 
 using namespace std;
+using filesystem::path;
+using filesystem::absolute;
+
 
 int main(int argc, char **argv) {
-    CLI::App app{"Hello World Example"};
+    CLI::App app{"Print JSON Lines"};
 
-    string text = "Hello World!";
-    app.add_option("-i", text, "Text to print")    ->capture_default_str();
+    path jsonLinesPath;
+    app.add_option("--input", jsonLinesPath,
+                   "Path to file")    ->check(CLI::ExistingFile);
 
     CLI11_PARSE(app, argc, argv);
 
-    cout << text << "\n";
+    cout << absolute(jsonLinesPath) << "\n";
     return 0;
 }
