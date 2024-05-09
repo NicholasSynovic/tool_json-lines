@@ -27,7 +27,7 @@ vector<string> readFile(path file)  {
 vector<json> convertToJson(vector<string> jsonStrings)   {
     vector<json> data = {};
 
-    /* #pragma omp parallel for */
+    #pragma omp parallel for
     for(int i = 0; i < jsonStrings.size(); i++) {
         data.insert(data.end(), json::parse(jsonStrings[i]));
         cout << i << "\n";
