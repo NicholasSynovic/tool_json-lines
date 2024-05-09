@@ -1,7 +1,9 @@
 #include "CLI/CLI.hpp"
 #include <filesystem>
 #include "nlohmann/json.hpp"
+#include <indicators/progress_bar.hpp>
 
+using namespace indicators;
 using namespace std;
 using filesystem::path;
 using filesystem::absolute;
@@ -25,12 +27,33 @@ vector<string> readFile(path file)  {
 }
 
 vector<json> convertToJson(vector<string> jsonStrings)   {
-    vector<json> data = {};
+    int jsonStringsSize = jsonStrings.size();
 
+    ProgressBar bar{
+        option::BarWidth{10},
+        option::Start{"["},
+        option::Fill{"="},
+        option::Lead{">"},
+        option::Remainder{" "},
+        option::End{"]"},
+        option::PostfixText{"Converting string to JSON"},
+        option::ForegroundColor{Color::green},
+        option::FontStyles{std::vector<FontStyle>{FontStyle::bold}},
+        option::MaxProgress{jsonStringsSize},
+    };
+
+    vector<json> data(jsonStringsSize);
+
+    int counter = 0;
     #pragma omp parallel for
-    for(int i = 0; i < jsonStrings.size(); i++) {
-        data.insert(data.end(), json::parse(jsonStrings[i]));
-        cout << i << "\n";
+    for(int i = 0; i < jsonStringsSize; i++) {
+        json jsonData = json::parse(jsonStrings[i]);
+        data[i] = jsonData;
+
+        #pragma omp critical
+        {
+            bar.tick();
+        }
     }
 
     return data;
@@ -41,7 +64,7 @@ int main(int argc, char **argv) {
     CLI::App app{"Print JSON Lines"};
 
     path jsonLinesPath;
-    app.add_option("--input", jsonLinesPath,
+    app.add_option("-i,--input", jsonLinesPath,
                    "Path to file")
        ->required()
        ->check(CLI::ExistingFile);
@@ -51,13 +74,8 @@ int main(int argc, char **argv) {
     path jsonLinesAbsolutePath = absolute(jsonLinesPath);
 
     vector<string> data = readFile(jsonLinesAbsolutePath);
-    cout << "Read file" << "\n";
 
     vector<json> jsonData = convertToJson(data);
-
-    for(int i = 0; i < jsonData.size(); i++)    {
-        cout << jsonData[i] << "\n";
-    };
 
     return 0;
 }
