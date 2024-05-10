@@ -1,10 +1,11 @@
-#include "../common/common.hpp"
 #include <indicators/progress_bar.hpp>
 #include "json.hpp"
 
 using namespace std;
 using namespace indicators;
 using namespace nlohmann;
+
+int MAX_BAR_SIZE = 20;
 
 vector<json> convertStringsToJSON(vector<string> jsonStrings)   {
     int jsonStringsSize = jsonStrings.size();
