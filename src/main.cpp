@@ -13,8 +13,6 @@ using filesystem::absolute;
 using filesystem::path;
 using nlohmann::json;
 
-int MAX_BAR_SIZE = 20;
-
 vector<string> readFile(path file)  {
     string line;
     ifstream jsonFile;
@@ -22,7 +20,7 @@ vector<string> readFile(path file)  {
     vector<string> data = {};
 
     IndeterminateProgressBar ibar{
-        option::BarWidth{MAX_BAR_SIZE},
+        option::BarWidth{20},
         option::Start{"["},
         option::Fill{"."},
         option::Lead{"<=>"},
