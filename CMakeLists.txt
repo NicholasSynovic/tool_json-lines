@@ -8,6 +8,10 @@ set(CMAKE_CXX_FLAGS "-g -O3 -I. -std=c++20 -Wunknown-pragmas -fopenmp")
 
 include(FetchContent)
 
+# SQLite3
+find_package(SQLite3)
+include_directories(${SQLITE3_INCLUDE_DIRS})
+
 # CLIUtils/CLI11
 FetchContent_Declare(
     cli11_proj
