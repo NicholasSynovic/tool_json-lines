@@ -1,5 +1,4 @@
 #include "CLI/CLI.hpp"
-#include "common/common.hpp"
 #include "json/json.hpp"
 #include "main.hpp"
 
@@ -13,6 +12,8 @@ using namespace std;
 using filesystem::absolute;
 using filesystem::path;
 using nlohmann::json;
+
+int MAX_BAR_SIZE = 20;
 
 vector<string> readFile(path file)  {
     string line;
