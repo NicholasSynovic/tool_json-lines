@@ -1,4 +1,5 @@
 #include <indicators/progress_bar.hpp>
+#include <indicators/termcolor.hpp>
 #include "json.hpp"
 
 using namespace std;
@@ -33,5 +34,6 @@ vector<json> convertStringsToJSON(vector<string> jsonStrings)   {
         bar.tick();
     }
 
+    cout << termcolor::reset << endl;
     return data;
 }

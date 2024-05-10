@@ -4,9 +4,11 @@
 #include "main.hpp"
 
 #include <filesystem>
+#include <indicators/cursor_control.hpp>
 #include <indicators/indeterminate_progress_bar.hpp>
 #include <indicators/progress_bar.hpp>
 #include <sqlite3.h>
+#include <indicators/termcolor.hpp>
 
 using namespace indicators;
 using namespace std;
@@ -41,6 +43,7 @@ vector<string> readFile(path file)  {
         jsonFile.close();
     };
 
+    cout << termcolor::reset << endl;
     return data;
 }
 
@@ -71,7 +74,7 @@ int main(int argc, char **argv) {
     // Open SQLite3 database
     int sqlite3DBReturnCode = sqlite3_open(sqlite3DBAbsolutePath.c_str(), &dbConn);
     if(sqlite3DBReturnCode != SQLITE_OK)    {
-        cout << string("Error opening ").append(sqlite3DBAbsolutePath);
+        cerr << string("Error opening ").append(sqlite3DBAbsolutePath);
         return 1;
     }
     else {
@@ -89,6 +92,8 @@ int main(int argc, char **argv) {
     /* cout << "Converted JSON strings to JSON objects" << endl; */
 
     // Write data to database
+    writeData_JSON(dbConn, data);
+    cout << "Wrote data to " << sqlite3DBAbsolutePath << endl;
 
     // Close database
     sqlite3_close(dbConn);
