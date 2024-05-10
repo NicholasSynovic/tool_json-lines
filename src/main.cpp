@@ -1,5 +1,6 @@
 #include "CLI/CLI.hpp"
 #include "json/json.hpp"
+#include "sqlite/sqlite.hpp"
 #include "main.hpp"
 
 #include <filesystem>
@@ -44,10 +45,12 @@ vector<string> readFile(path file)  {
 }
 
 int main(int argc, char **argv) {
+    // Allocate variables
     path jsonLinesPath;
     path sqliteDBPath;
     sqlite3* dbConn;
 
+    // Command line arg parsing
     CLI::App app{"JSON Lines to SQLite3 Database"};
     app.add_option("-i,--input", jsonLinesPath,
                    "Path to JSON Lines file")
@@ -61,17 +64,28 @@ int main(int argc, char **argv) {
 
     CLI11_PARSE(app, argc, argv);
 
+    // Make absolute paths
     path jsonLinesAbsolutePath = absolute(jsonLinesPath);
     path sqlite3DBAbsolutePath = absolute(sqliteDBPath);
 
+    // Open SQLite3 database
     int sqlite3DBReturnCode = sqlite3_open(sqlite3DBAbsolutePath.c_str(), &dbConn);
     if(sqlite3DBReturnCode != SQLITE_OK)    {
         cout << string("Error opening ").append(sqlite3DBAbsolutePath);
         return 1;
     }
 
+    // Create SQLite3 tables if they do not exist
+    createTables(dbConn);
+
+    // Load JSON data into memory
     vector<string> data = readFile(jsonLinesAbsolutePath);
     vector<json> jsonData = convertStringsToJSON(data);
+
+    // Write data to database
+
+    // Close database
+    sqlite3_close(dbConn);
 
     return 0;
 }
