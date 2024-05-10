@@ -1,15 +1,17 @@
 #include "CLI/CLI.hpp"
-#include <filesystem>
-#include "nlohmann/json.hpp"
-#include <indicators/progress_bar.hpp>
-#include <indicators/indeterminate_progress_bar.hpp>
-#include "main.hpp"
 #include "common/common.hpp"
+#include "json/json.hpp"
+#include "main.hpp"
+
+#include <filesystem>
+#include <indicators/indeterminate_progress_bar.hpp>
+#include <indicators/progress_bar.hpp>
 
 using namespace indicators;
 using namespace std;
-using filesystem::path;
+
 using filesystem::absolute;
+using filesystem::path;
 using nlohmann::json;
 
 vector<string> readFile(path file)  {
@@ -41,38 +43,6 @@ vector<string> readFile(path file)  {
     return data;
 }
 
-vector<json> convertToJson(vector<string> jsonStrings)   {
-    int jsonStringsSize = jsonStrings.size();
-
-    ProgressBar bar{
-        option::BarWidth{MAX_BAR_SIZE},
-        option::Start{"["},
-        option::Fill{"="},
-        option::Lead{">"},
-        option::Remainder{" "},
-        option::End{"]"},
-        option::PostfixText{"Converting strings to JSON"},
-        option::ForegroundColor{Color::green},
-        option::FontStyles{std::vector<FontStyle>{FontStyle::bold}},
-        option::MaxProgress{jsonStringsSize},
-        option::ShowElapsedTime{true},
-        option::ShowRemainingTime{true},
-    };
-
-    vector<json> data(jsonStringsSize);
-
-    int counter = 0;
-    /* #pragma omp parallel for */
-    for(int i = 0; i < jsonStringsSize; i++) {
-        json jsonData = json::parse(jsonStrings[i]);
-        data[i] = jsonData;
-        bar.tick();
-    }
-
-    return data;
-}
-
-
 int main(int argc, char **argv) {
     CLI::App app{"Print JSON Lines"};
 
@@ -88,7 +58,7 @@ int main(int argc, char **argv) {
 
     vector<string> data = readFile(jsonLinesAbsolutePath);
 
-    vector<json> jsonData = convertToJson(data);
+    vector<json> jsonData = convertStringsToJSON(data);
 
     return 0;
 }

@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace indicators;
+using namespace nlohmann;
 
 vector<json> convertStringsToJSON(vector<string> jsonStrings)   {
     int jsonStringsSize = jsonStrings.size();

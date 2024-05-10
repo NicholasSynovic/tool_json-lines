@@ -4,6 +4,6 @@
 #define MAIN
 
 // Functions declarations
-std::vector<nlohmann::json> convertStringToJSON(std::vector<std::string> jsonStrings);
+std::vector<nlohmann::json> convertStringsToJSON(std::vector<std::string> jsonStrings);
 
 #endif
