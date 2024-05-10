@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <indicators/indeterminate_progress_bar.hpp>
 #include <indicators/progress_bar.hpp>
+#include <sqlite3.h>
 
 using namespace indicators;
 using namespace std;
@@ -43,20 +44,33 @@ vector<string> readFile(path file)  {
 }
 
 int main(int argc, char **argv) {
-    CLI::App app{"Print JSON Lines"};
-
     path jsonLinesPath;
+    path sqliteDBPath;
+    sqlite3* dbConn;
+
+    CLI::App app{"JSON Lines to SQLite3 Database"};
     app.add_option("-i,--input", jsonLinesPath,
-                   "Path to file")
+                   "Path to JSON Lines file")
        ->required()
        ->check(CLI::ExistingFile);
+
+    app.add_option("-o,--output", sqliteDBPath,
+                   "Path to SQLite3 database to store output")
+       ->required()
+       ->check(CLI::NonexistentPath);
 
     CLI11_PARSE(app, argc, argv);
 
     path jsonLinesAbsolutePath = absolute(jsonLinesPath);
+    path sqlite3DBAbsolutePath = absolute(sqliteDBPath);
+
+    int sqlite3DBReturnCode = sqlite3_open(sqlite3DBAbsolutePath.c_str(), &dbConn);
+    if(sqlite3DBReturnCode != SQLITE_OK)    {
+        cout << string("Error opening ").append(sqlite3DBAbsolutePath);
+        return 1;
+    }
 
     vector<string> data = readFile(jsonLinesAbsolutePath);
-
     vector<json> jsonData = convertStringsToJSON(data);
 
     return 0;
