@@ -4,6 +4,7 @@
 #include <indicators/progress_bar.hpp>
 #include <indicators/indeterminate_progress_bar.hpp>
 #include "main.hpp"
+#include "common/common.hpp"
 
 using namespace indicators;
 using namespace std;
