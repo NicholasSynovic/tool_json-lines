@@ -74,13 +74,19 @@ int main(int argc, char **argv) {
         cout << string("Error opening ").append(sqlite3DBAbsolutePath);
         return 1;
     }
+    else {
+        cout << "Opened " << sqlite3DBAbsolutePath << endl;
+    }
 
     // Create SQLite3 tables if they do not exist
     createTables(dbConn);
 
     // Load JSON data into memory
     vector<string> data = readFile(jsonLinesAbsolutePath);
-    vector<json> jsonData = convertStringsToJSON(data);
+    cout << "Read file " << jsonLinesAbsolutePath << endl;
+
+    /* vector<json> jsonData = convertStringsToJSON(data); */
+    /* cout << "Converted JSON strings to JSON objects" << endl; */
 
     // Write data to database
 
