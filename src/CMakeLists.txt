@@ -6,4 +6,5 @@ target_link_libraries(
     PRIVATE CLI11
     PRIVATE nlohmann_json
     PRIVATE indicators
+    PRIVATE fmt
     )

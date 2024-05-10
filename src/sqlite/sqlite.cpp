@@ -1,4 +1,5 @@
 #include <string>
+#include "fmt/format.h"
 #include <indicators/progress_bar.hpp>
 #include <indicators/cursor_control.hpp>
 #include <indicators/termcolor.hpp>
@@ -8,6 +9,7 @@
 
 using namespace std;
 using namespace indicators;
+using namespace fmt;
 
 void createTables(sqlite3* dbConn)   {
     vector<string> sql = {
@@ -26,6 +28,11 @@ void createTables(sqlite3* dbConn)   {
     }
 }
 
+string _createSQLQuery(vector<string> data) {
+    string templateString = string();
+    return templateString;
+}
+
 sqlite3_stmt* _createSQLite3Statement(sqlite3* dbConn, string sql)   {
     sqlite3_stmt* sqlite3Statement;
     int sqlite3StatementReturnCode = sqlite3_prepare_v2(dbConn, sql.c_str(), -1,
@@ -41,6 +48,7 @@ sqlite3_stmt* _createSQLite3Statement(sqlite3* dbConn, string sql)   {
 
 int writeData_JSON(sqlite3* dbConn, vector<string> jsonStrings) {
     string sql = "INSERT INTO json (json_string) VALUES (?)";
+    sqlite3_stmt* sqlite3Statement = _createSQLite3Statement(dbConn, sql);
 
     ProgressBar bar{
         option::BarWidth{20},
@@ -58,22 +66,20 @@ int writeData_JSON(sqlite3* dbConn, vector<string> jsonStrings) {
     };
 
     for(int i = 0; i < jsonStrings.size(); i++) {
-        sqlite3_stmt* sqlite3Statement = _createSQLite3Statement(dbConn, sql);
-
         sqlite3_bind_text(sqlite3Statement, 1, jsonStrings[i].c_str(), -1,
                           SQLITE_STATIC);
 
         int sqlite3StepReturnCode = sqlite3_step(sqlite3Statement);
-        if(sqlite3StepReturnCode != SQLITE_OK)  {
+        if(sqlite3StepReturnCode != SQLITE_DONE)  {
             cerr << "Error inserting data: " << i << endl;
             return 1;
         }
         else {
-            cout << "Stored into json table index: " << i << endl;
-            sqlite3_finalize(sqlite3Statement);
+            sqlite3_reset(sqlite3Statement);
             bar.tick();
         }
     }
+    sqlite3_finalize(sqlite3Statement);
     cout << termcolor::reset << endl;
     return 0;
 }

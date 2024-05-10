@@ -33,10 +33,19 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/p-ranav/indicators.git
     GIT_TAG v2.3
 )
+# fmtlib/fmt
+FetchContent_Declare(
+    fmt_proj
+    QUIET
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+    GIT_TAG 10.2.1
+)
+
 FetchContent_MakeAvailable(
     cli11_proj
     json_proj
     indicators_proj
-    )
+    fmt_proj
+)
 
 add_subdirectory(src)
