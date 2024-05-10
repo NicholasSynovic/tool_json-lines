@@ -3,9 +3,6 @@
 
 // Functions declarations
 void readFile();
-void convertStringToJSON();
-
-// Global Variables
-int MAX_BAR_SIZE = 20;
+int main();
 
 #endif
