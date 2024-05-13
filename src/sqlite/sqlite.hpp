@@ -9,5 +9,6 @@
 void createTables(sqlite3* dbConn);
 sqlite3_stmt* _createSQLite3Statement(sqlite3* dbConn, std::string sql);
 int writeData_JSON(sqlite3* dbConn, std::vector<std::string> jsonStrings);
+std::string _createSQLQuery(sqlite3* dbConn, std::vector<std::string> data);
 
 #endif

@@ -28,10 +28,6 @@ void createTables(sqlite3* dbConn)   {
     }
 }
 
-string _createSQLQuery(vector<string> data) {
-    string templateString = string();
-    return templateString;
-}
 
 sqlite3_stmt* _createSQLite3Statement(sqlite3* dbConn, string sql)   {
     sqlite3_stmt* sqlite3Statement;
@@ -44,6 +40,18 @@ sqlite3_stmt* _createSQLite3Statement(sqlite3* dbConn, string sql)   {
     else {
         return sqlite3Statement;
     }
+}
+
+string _createSQLQuery(sqlite3* dbConn, vector<string> data) {
+    string sql = string("BEGIN TRANSACTION;");
+
+    for(int i = 0; i < data.size(); i++)    {
+        string templateString =
+            format("INSERT INTO json (json_string) VALUES (jsonb({}));", data[i]);
+        sql.append(templateString);
+    }
+    sql.append("COMMIT;");
+    return sql;
 }
 
 int writeData_JSON(sqlite3* dbConn, vector<string> jsonStrings) {
