@@ -38,20 +38,52 @@ sqlite3_stmt* _createSQLite3Statement(sqlite3* dbConn, string sql)   {
         exit(1);
     }
     else {
+        cout << "Created SQL statement" << endl;
         return sqlite3Statement;
     }
 }
 
 string _createSQLQuery(sqlite3* dbConn, vector<string> data) {
-    string sql = string("BEGIN TRANSACTION;");
+    string sql = string("BEGIN TRANSACTION;\n");
+
+    ProgressBar bar{
+        option::BarWidth{20},
+        option::Start{"["},
+        option::Fill{"="},
+        option::Lead{">"},
+        option::Remainder{" "},
+        option::End{"]"},
+        option::PostfixText{"Creating SQL TRANSACTION Query"},
+        option::ForegroundColor{Color::green},
+        option::FontStyles{std::vector<FontStyle>{FontStyle::bold}},
+        option::MaxProgress{data.size()},
+        option::ShowElapsedTime{true},
+        option::ShowRemainingTime{true},
+    };
 
     for(int i = 0; i < data.size(); i++)    {
         string templateString =
-            format("INSERT INTO json (json_string) VALUES (jsonb({}));", data[i]);
+            format("INSERT INTO json (json_string) VALUES ({}, \"fred\");\n", i);
         sql.append(templateString);
+        bar.tick();
     }
     sql.append("COMMIT;");
+    cout << termcolor::reset << endl;
+    cout << sql << endl;
     return sql;
+}
+
+int evaluteSQL(sqlite3* dbConn, string sql) {
+    sqlite3_stmt* sqlite3Statement = _createSQLite3Statement(dbConn, sql);
+    int sqlite3StepReturnCode = sqlite3_step(sqlite3Statement);
+    if(sqlite3StepReturnCode != SQLITE_DONE)  {
+        cout << "fred" << endl;
+        return 1;
+    }
+    else {
+        sqlite3_finalize(sqlite3Statement);
+        return 0;
+    }
 }
 
 int writeData_JSON(sqlite3* dbConn, vector<string> jsonStrings) {

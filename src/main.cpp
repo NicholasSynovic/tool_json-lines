@@ -92,7 +92,8 @@ int main(int argc, char **argv) {
     /* cout << "Converted JSON strings to JSON objects" << endl; */
 
     // Write data to database
-    _createSQLQuery(dbConn, data);
+    string sql = _createSQLQuery(dbConn, data);
+    evaluteSQL(dbConn, sql);
     /* writeData_JSON(dbConn, data); */
     /* cout << "Wrote data to " << sqlite3DBAbsolutePath << endl; */
 

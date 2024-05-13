@@ -9,8 +9,8 @@ set(CMAKE_CXX_FLAGS "-g -O3 -I. -std=c++20 -Wunknown-pragmas -fopenmp")
 include(FetchContent)
 
 # SQLite3
-find_package(SQLite3 REQUIRED)
-include_directories(${SQLITE3_INCLUDE_DIRS})
+# find_package(SQLite3 REQUIRED)
+# include_directories(${SQLITE3_INCLUDE_DIRS})
 
 # CLIUtils/CLI11
 FetchContent_Declare(
@@ -40,12 +40,20 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git
     GIT_TAG 10.2.1
 )
+# SRombauts/SQLiteCpp
+FetchContent_Declare(
+    sqlite3_proj
+    QUIET
+    GIT_REPOSITORY https://github.com/SRombauts/SQLiteCpp.git
+    GIT_TAG 3.3.1
+)
 
 FetchContent_MakeAvailable(
     cli11_proj
     json_proj
     indicators_proj
     fmt_proj
+    sqlite3_proj
 )
 
 add_subdirectory(src)
